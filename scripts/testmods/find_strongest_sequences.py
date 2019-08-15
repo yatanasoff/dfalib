@@ -8,7 +8,7 @@ import subprocess
 import json
 import tempfile
 import argparse
-import tqdm
+# import tqdm
 
 # /home/misha/projects-git/dfalib-build/build/dfalibproj/sources/testmod/testmod --find-GQD 1 --find-IMT 1 --find-TRP 1 "./output.txt"
 
@@ -56,7 +56,10 @@ def processLines(lines, best_sequences, find_params, verbose=False):
         if len(best_sequences[0][0]) > len(lines[0]):
             best_sequences = []
 
-    space = lines if verbose==False else tqdm.tqdm(lines)
+    
+    # space = lines if verbose==False else tqdm.tqdm(lines)
+    space = lines
+    c = 1000
     for seq in space:
         seq_coefs = parsers.analyze_string(seq, find_params)
         good = True
@@ -68,6 +71,11 @@ def processLines(lines, best_sequences, find_params, verbose=False):
             best_sequences.append((seq, seq_coefs))
             best_sequences = list(filter(
                 lambda x: not is_less(x[1], seq_coefs), best_sequences))
+            if(c>0):
+            	c -=1
+            else:
+            	break
+            
     return best_sequences
 
 def calculate_min_lines(next_grammar_path, config_path, tmp_dirpath, executor_result_path, executor):
@@ -90,30 +98,41 @@ def calculate_min_lines(next_grammar_path, config_path, tmp_dirpath, executor_re
 
 if __name__ == "__main__":
     try:
-        parser = argparse.ArgumentParser(description='Finds strongest sequences and outputs to output file')
-        parser.add_argument('executor_path', type=str)
-        parser.add_argument('output_path', type=str)
-        parser.add_argument('--find-GQD', type=int, default=0)
-        parser.add_argument('--find-IMT', type=int, default=0)
-        parser.add_argument('--find-HRP', type=int, default=0)
-        # --find-TRP 0|1|2
-        parser.add_argument('--find-TRP', type=int, default=0)
-        parser.add_argument('--length', type=int, default=0)
+        # parser = argparse.ArgumentParser(description='Finds strongest sequences and outputs to output file')
+        # parser.add_argument('executor_path', type=str)
+        # parser.add_argument('output_path', type=str)
+        # parser.add_argument('--find-GQD', type=int, default=0)
+        # parser.add_argument('--find-IMT', type=int, default=0)
+        # parser.add_argument('--find-HRP', type=int, default=0)
+        # # --find-TRP 0|1|2
+        # parser.add_argument('--find-TRP', type=int, default=0)
+        # parser.add_argument('--length', type=int, default=0)
 
 
-        args = parser.parse_args()
-        executor = args.executor_path
-        output_path = args.output_path
-        find_GQD = bool(args.find_GQD)
-        find_IMT = bool(args.find_IMT)
-        find_HRP = bool(args.find_HRP)
-        find_TRP = args.find_TRP
-        min_size = args.length
+        # args = parser.parse_args()
+        # executor = args.executor_path
+        # output_path = args.output_path
+        # find_GQD = bool(args.find_GQD)
+        # find_IMT = bool(args.find_IMT)
+        # find_HRP = bool(args.find_HRP)
+        # find_TRP = args.find_TRP
+        # min_size = args.length
+
+        find_GQD = True
+        find_IMT = False
+        find_HRP = False
+        find_TRP = False
+
+        tmp_dirpath = "/home/christmas/Desktop/asd1"
+        output_path = tmp_dirpath+ "/output.txt"
+        # executor= "/home/christmas/CLionProjects/dfalib/build/dfalibproj/sources/testmod/testmod"
+        executor  = "/home/christmas/Desktop/virgin/dfalib/build/dfalibproj/sources/testmod/testmod"
+        min_size = 1
+
 
         if find_GQD == False and find_IMT == False and find_HRP == False and find_TRP == 0:
             raise ValueError("Invalid configuration")
 
-        tmp_dirpath = tempfile.mkdtemp()
         print("tmpdir: {}".format(tmp_dirpath))
 
         next_grammar_path = "{}/next_grammar.txt".format(tmp_dirpath)

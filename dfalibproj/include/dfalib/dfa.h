@@ -5,6 +5,8 @@
 #include <set>
 #include <memory>
 #include <fstream>
+#include <bits/stdc++.h>
+#include "regex/regex.h"
 
 struct Automata {
     int n_value; // state count
@@ -41,24 +43,21 @@ struct Automata {
         return transitions[from * l_value + symb];
     }
 
-    static std::shared_ptr<Automata> read_from_stream(std::ifstream& in);
+    static std::shared_ptr<Automata> read_from_stream(std::istream& in);
+
     void dump_to_stream(std::ofstream& out);
+    void dump_to_string(std::string& result);
 
 private:
     std::vector<int> transitions;
 };
 
-// void create_automata(std::string rexpr, Automata& new_automata);
-
-//void intesect_automata(const Automata& first_automata, const Automata& second_automata, Automata& new_automata);
-//void find_min_automata(const Automata& automata, Automata& new_automata);
-//bool check_eq(const Automata& automata_first_, const Automata& automata_second_);
 
 std::shared_ptr<Automata> sum_automata(const std::shared_ptr<Automata>& first_automata, std::shared_ptr<Automata>& second_automata);
 std::shared_ptr<Automata> intesect_automata(const std::shared_ptr<Automata>& first_automata, std::shared_ptr<Automata>& second_automata);
 std::shared_ptr<Automata> find_min_automata(const std::shared_ptr<Automata>& automata);
 bool check_eq(const std::shared_ptr<Automata>& automata_first_, const std::shared_ptr<Automata>& automata_second_);
 
-void generate_automata_visualization_script(const std::shared_ptr<Automata>& automata, std::string filepath);
+//void generate_automata_visualization_script(const std::shared_ptr<Automata>& automata, std::string filepath);
 
 #endif

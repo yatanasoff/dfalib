@@ -480,6 +480,8 @@ void RegEx::Dump2Stream(std::ostream& out) {
 
 }
 
+
+
 int RegEx::PreProcessLiterals() {
   if (m_CurPreProcChar == '\0') 
 	  return -1;

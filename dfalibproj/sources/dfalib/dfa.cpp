@@ -6,7 +6,7 @@
 #include <list>
 #include <algorithm>
 
-std::shared_ptr<Automata> Automata::read_from_stream(std::ifstream& in)
+std::shared_ptr<Automata> Automata::read_from_stream(std::istream& in)
 {
     int teminate_state_count;
 
@@ -47,6 +47,14 @@ void Automata::dump_to_stream(std::ofstream& out)
         int symb = i % 4;
         out << from << " " << char(symb + 'a') << " " << this->transitions[i] << std::endl;
     }
+}
+
+void Automata::dump_to_string(std::string& result){
+    std::stringstream s;
+    std::ofstream out;
+    dump_to_stream(out);
+    s << out.rdbuf();
+    result =  s.str();
 }
 
 // https://github.com/davinash/regex/tree/master/src
@@ -100,107 +108,6 @@ GraphToken inc_graphtoken(const GraphToken& first) {
     return GraphToken();
 }
 
-void private_create_automata(std::list<char>& input, std::list<char>::iterator& it,
-    std::stack<GraphToken>& tokens, std::stack<char>& control) {
-
-    char control_symbols[] = "+|*()";
-    int control_symbols_count = sizeof(control_symbols) / sizeof(char);
-    while (it != input.end()) {
-        char symb = *it++;
-
-        if (std::find(control_symbols, control_symbols + control_symbols_count, symb)
-            == control_symbols + control_symbols_count) {
-            tokens.push(GraphToken(symb));
-            continue;
-        }
-        
-
-        if (symb == '(') {
-            control.push(symb);
-            private_create_automata(input, it, tokens, control);
-        }
-        if (symb == ')'/* || it == input.end()*/) {
-            while (/*control.empty() == false &&*/ control.top() != '(') {
-                char op = control.top();
-                control.pop();
-                if (op != '|') {
-                    throw std::runtime_error("smth is wrong");
-                }
-
-                GraphToken second_token = tokens.top();
-                tokens.pop();
-                GraphToken first_token = tokens.top();
-                tokens.pop();
-                tokens.push(or_graphtokens(first_token, second_token));
-            }
-            
-            assert(control.top() == '(');
-            control.pop();
-            return;
-        }
-
-        if (symb == '|') {
-            control.push(symb);
-            continue;
-        }
-
-        if (symb == '+') {
-            GraphToken token = tokens.top();
-            tokens.pop();
-            tokens.push(inc_graphtoken(token));
-            continue;
-        }
-
-        if (symb == '*') {
-            if (*it == '(') {
-                control.push('(');
-                private_create_automata(input, ++it, tokens, control);
-            } else {
-                char symb = *it++;
-                tokens.push(GraphToken(symb));
-            }
-
-            GraphToken second_token = tokens.top();
-            tokens.pop();
-            GraphToken first_token = tokens.top();
-            tokens.pop();
-            tokens.push(mult_graphtokens(first_token, second_token));
-            continue;
-        }
-    }
-}
-
-void create_automata(std::string rexpr, Automata& new_automata) {
-    std::stack<GraphToken> tokens;
-    std::stack<char> control;
-
-    std::list<char> input;
-    char control_symbols[] = "+|*()";
-    int control_symbols_count = sizeof(control_symbols) / sizeof(char);
-
-    bool prev_symb_ischar = false;
-    for (int i = 0; i < rexpr.size(); ++i) {
-        if (rexpr[i] == ' ') {
-            continue;
-        }
-        if (rexpr[i] == '+') {
-            input.push_back(rexpr[i]);
-            continue;
-        }
-
-        bool current_symb_isletter = std::find(control_symbols,
-            control_symbols + control_symbols_count, rexpr[i]) == control_symbols + control_symbols_count;
-        if (prev_symb_ischar == true && (current_symb_isletter == true || rexpr[i] == '(')) {
-            input.push_back('*');
-        }
-        input.push_back(rexpr[i]);
-        prev_symb_ischar = current_symb_isletter || rexpr[i] == ')';
-    }
-
-    auto it = input.begin();
-    private_create_automata(input, it, tokens, control);
-    assert(control.size() == 0 && tokens.size() == 1);
-}
 
 void sum_automata(const Automata& first_automata, const Automata& second_automata, Automata& new_automata) {
     new_automata.l_value = std::max(first_automata.l_value, second_automata.l_value);

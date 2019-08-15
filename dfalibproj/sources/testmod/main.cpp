@@ -1,114 +1,72 @@
-//#include <iostream>
+#include <iostream>
 #include <set>
-#include <fstream>
 #include <queue>
 #include <map>
 #include <cassert>
 #include <list>
-#include <stack>
 #include <algorithm>
 #include <vector>
-#include <cctype>
 #include <memory>
 #include <string>
-
-#include "json.hpp"
-
-#include "regex/regex.h"
-#include "DNALangParser.h"
-#include "./dfalib/dfa.h"
-#include "parserequest.h"
+#include <unordered_map>
+#include "dfalib/algorithms.h"
+#include "ProgressBar.hpp"
 
 using std::string;
 using std::map;
-using json = nlohmann::json;
+using namespace dfa;
 
-std::shared_ptr<Automata> generate_big_automata(std::shared_ptr<GrammarExprTree> root, std::map<std::string, std::shared_ptr<Automata>>& processed_items) {
-	if (root->childs.empty()) {
-		return processed_items.at(root->name);
-	}
-	
-	std::shared_ptr<Automata> result = find_min_automata(generate_big_automata(root->childs[0], processed_items));
-    for (int i = 1; i < root->childs.size(); ++i) {
-		auto next = find_min_automata(generate_big_automata(root->childs[i], processed_items));
-		if (root->op == '*') {
-			result = find_min_automata(intesect_automata(result, next));
-			continue;
-		}
-		if (root->op == '|') {
-			result = find_min_automata(sum_automata(result, next));
-			continue;
-		}
-	}
-	return result;
-}
+int main(int argc, char* argv[]) {
 
-bool is_file_exist(string fileName)
-{
-    std::ifstream infile(fileName);
-    return infile.good();
-}
-
-void find_all_min_strings(std::shared_ptr<Automata>& big, std::vector<int>& min_paths, int currentNode, list<string>& result);
-void find_all_min_strings(std::shared_ptr<Automata>& big, std::list<string>& min_strings);
-
-
-int main(int argc, char* argv[])
-{
-    if (argc != 2) {
-        return 1;
-    }
-
-    std::ifstream inf(argv[1]);
-    std::string config((std::istreambuf_iterator<char>(inf)),
-        std::istreambuf_iterator<char>());
-    json obj = json::parse(config);
-
-    string grammarpath = obj["grammar-filepath"].get<std::string>();
-
-    string tmpdir = obj["tmp-dirpath"].get<std::string>();
+    string tmpdir = "/home/christmas/Desktop/asd2";
+    string grammarpath = tmpdir + "/grammar.txt";
     string regpath = tmpdir + "/parsed_grammar.txt";
     string resultgraphpath = tmpdir + "/result_graph.txt";
-    string minstringpath = obj["output-filepath"].get<std::string>();
+    string minstringpath = tmpdir + "/next_result.txt";
+    string outputpath = tmpdir +"/output.txt";
+
+    vector<vector<int>> values_from_best_sequences;
+
+    bool find_GQD = 1, find_IMT= 0, find_TRP=0, find_HRP=0; int size = 15;
+
 
     std::map<std::string, std::shared_ptr<Automata>> processed_items;
     DNALangParser grammarParser;
-    std::map<string, set<string> > grammar = grammarParser.parseFile(grammarpath);
+    GrammarGenerator grammarGenerator;
+    Parser parser;
+    string grammar_string = grammarGenerator.create_grammar(find_GQD, find_IMT, find_TRP, find_HRP, {}, size);
+    cout << grammar_string << endl << "-----------------------------------------" << endl;
+    std::map<string, set<string> > grammar = grammarParser.parseString(grammar_string);
     assert(grammar.count("result") != 0);
     for (auto it = grammar.begin(); it != grammar.end(); ++it) {
         if (it->first == "result") {
             continue;
         }
-        //cout << "reading rule " << it->first << std::endl;
+        cout << "reading rule " << it->first << std::endl;
 
         std::shared_ptr<Automata> result;
         int ind = 0;
         for (auto jt = it->second.begin(); jt != it->second.end(); ++jt) {
-            //cout << "\treading subrule " << ind++ << std::endl;
+            cout << "\treading subrule " << ind++ << std::endl;
 
-            string temppath = tmpdir + "/temp.txt";
+
             string expr = *jt;
             std::string::iterator end_pos = std::remove(expr.begin(), expr.end(), ' ');
             expr.erase(end_pos, expr.end());
             RegEx re;
             re.Compile(expr);
-            std::ofstream f1(temppath);
-            re.Dump2Stream(f1);
+            stringstream f1;
+           re.Dump2Stream(f1);
+            auto temp = find_min_automata(Automata::read_from_stream(f1));
 
-            ifstream f2(temppath);
-            assert(f2.is_open() == true);
-
-
-            auto temp = find_min_automata(Automata::read_from_stream(f2));
-
-			// generate_automata_visualization_script(temp, "E:/projects/projects-git/dfalib/img/fsm-my.gv");
+            // generate_automata_visualization_script(temp, "E:/projects/projects-git/dfalib/img/fsm-my.gv");
 
             if (jt == it->second.begin()) {
                 result = temp;
             } else {
                 result = find_min_automata(sum_automata(result, temp));
             }
-            //cout << "\tCount of states in subrule: " << result->state_count() << std::endl;
+            cout << "\tCount of states in subrule: " << result->state_count() << std::endl;
         }
         processed_items[it->first] = result;
 
@@ -116,7 +74,7 @@ int main(int argc, char* argv[])
 
 
     std::string resultexpr = *grammar["result"].begin();
-    std::shared_ptr<GrammarExprTree> calculations_graph = parse_request(resultexpr);
+    std::shared_ptr<GrammarExprTree> calculations_graph = parser.parse_request(resultexpr);
 
 
     std::set<std::string> items;
@@ -133,116 +91,51 @@ int main(int argc, char* argv[])
         }
     }
 
-
-    //cout << "Answer calculation..." << std::endl;
+    cout << "Answer calculation..." << std::endl;
     std::shared_ptr<Automata> big = generate_big_automata(calculations_graph, processed_items);
-    //cout << "\tCount of states in result: " << big->state_count() << std::endl;
+    cout << "\tCount of states in result: " << big->state_count() << std::endl;
+    std::vector<string> min_strings;
+    map<string, vector<int>> best_sequences = {};
 
-    ofstream fres(resultgraphpath);
-    big->dump_to_stream(fres);
+    find_all_min_strings(big, min_strings);
 
-    {
-        //std::vector<string> min_strings(big->state_count());
-        //std::queue<int> states;
-        //std::set<int> viewed_states;
-        //states.push(0);
-        //viewed_states.insert(0);
-        //while (states.empty() == false) {
-        //    auto from = states.front();
-        //    states.pop();
-        //    for (int i = 0; i < 4; ++i) {
-        //        int to = big->get_to_state(from, i);
-        //        if (viewed_states.count(to) > 0)
-        //            continue;
-        //        min_strings[to] = min_strings[from] + char('a' + i);
-        //        states.push(to);
-        //        viewed_states.insert(to);
-        //    }
-        //}
+    cout << "total: " << min_strings.size() <<  endl;
+    if (min_strings.empty()) {
+        cout << "NO ANSWER" << std::endl;
+    } else {
+        const int limit = min_strings.size();
+        cout << limit << endl;
+        ProgressBar progressBar(limit, 50);
 
-        std::list<string> min_strings;
-        find_all_min_strings(big, min_strings);
 
-        ofstream f(minstringpath);
-        //cout << "answers:" << std::endl;
-        if (min_strings.empty()) {
-            //cout << "NO ANSWER" << std::endl;
-            // f << "NO ANSWER";
-        } else {
-            for (auto& nextstring : min_strings)
-            {
-                //cout << nextstring << std::endl;
-                f << nextstring << std::endl;
-            }
+
+//          min_strings  = {"gaaagaaagaaag"};
+
+        for (auto &nextstring : min_strings) {
+            best_sequences.insert({nextstring, analyze_string(nextstring,find_GQD,find_IMT,find_TRP,find_HRP)}) ;
+            ++progressBar;
+            progressBar.display();
+
         }
+        progressBar.done();
+    }
+
+
+
+
+    ofstream output(outputpath);
+    assert(output.is_open()==true);
+    int i,im;
+    for( auto k : best_sequences){
+            string coefs = "(";
+            im = k.second.size();
+            for(i=0;i<im;i++){
+                coefs += to_string(k.second[i])+(i==im-1?"":", ");
+            }
+            coefs += ")";
+        output << k.first <<": "<< coefs << endl;
+
     }
 
     return 0;
-}
-
-std::map<char, char> nsymb2symb = { { 'a', 'a' },{ 'c', 'c' },{ 'b', 'g' },{ 'd', 't' } };
-void find_all_min_strings(std::shared_ptr<Automata>& big, std::vector<int>& min_paths, int currentNode, list<string>& result) {
-    result.clear();
-    if (min_paths[currentNode] == 0) {
-        result.push_back("");
-        return;
-    }
-    for (int prevNode = 0; prevNode < big->state_count(); ++prevNode) {
-        if (min_paths[prevNode] != min_paths[currentNode] - 1) {
-            continue;
-        }
-
-        std::list<int> symbols;
-        for (int i = 0; i < 4; ++i) {
-            if (big->get_to_state(prevNode, i) == currentNode) {
-                symbols.push_back(i);
-            }
-        }
-
-        list<string> subresult;
-        if (symbols.empty() == true) {
-            continue;
-        }
-
-        find_all_min_strings(big, min_paths, prevNode, subresult);
-        for (auto symb : symbols) {
-            for (auto res : subresult) {
-                result.push_back(res.append(1, nsymb2symb['a' + symb]));
-            }
-        }
-    }
-}
-
-void find_all_min_strings(std::shared_ptr<Automata>& big, std::list<string>& min_strings) {
-    min_strings.clear();
-    std::vector<int> min_paths(big->state_count(), std::numeric_limits<int>::max());
-    min_paths[0] = 0;
-
-    std::queue<int> states;
-    std::set<int> viewed_states;
-    states.push(0);
-    viewed_states.insert(0);
-    min_paths[0] = 0;
-    while (states.empty() == false) {
-        auto from = states.front();
-        states.pop();
-        for (int i = 0; i < 4; ++i) {
-            int to = big->get_to_state(from, i);
-            if (viewed_states.count(to) > 0)
-                continue;
-            min_paths[to] = min_paths[from] + 1;
-            states.push(to);
-            viewed_states.insert(to);
-        }
-    }
-
-    // assert(big->terminal_states.size() == 1);
-    for (int i = 0; i < big->state_count(); ++i) {
-        if (big->is_terminal(i) == false)
-            continue;
-
-        list<string> subresult;
-        find_all_min_strings(big, min_paths, i, subresult);
-        min_strings.insert(min_strings.end(), subresult.begin(), subresult.end());
-    }
 }
