@@ -79,7 +79,7 @@ std::string GrammarGenerator::create_grammar(
         bool find_TPR,
         bool find_HRP,
         vector<string> hrps,
-        int min_size){
+        int lenght){
 
     string result = "";
     string names = {};
@@ -124,14 +124,17 @@ std::string GrammarGenerator::create_grammar(
         names+="\\\n\t";
 
     }
-    names += "LENGTH";
-    result += "LENGTH = ";
-    int i;
-    for(i=0;i<min_size;i++){
-        result+="X";
+
+    if(lenght>0){
+            names += "LENGTH";
+            result += "LENGTH = ";
+            int i;
+            for(i=0;i<lenght;i++){
+                result+="X";
+            }
+            result += "\n";
     }
 
-    result += "\n";
     result += "X = (a|c|g|t)\n";
     result += "result = " + names;
     return result;

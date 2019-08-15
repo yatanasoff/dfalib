@@ -23,6 +23,6 @@ public:
             bool find_TPR = 0,
             bool find_HRP = 0,
             vector<string> hrps = {},
-            int min_size=1);
+            int lenght=0);
 };
 #endif // GRAMMARGENERATOR_H

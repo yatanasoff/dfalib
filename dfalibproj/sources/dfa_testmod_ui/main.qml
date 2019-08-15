@@ -8,7 +8,7 @@ Window {
     visible: true
     width: 640
     height: 480
-    title: qsTr("dfa_testmod_ui")
+    title: qsTr("DAFNA")
 
     TabBar {
         id: tabBar
@@ -23,7 +23,9 @@ Window {
         TabButton{
             text: "Options"
         }
-
+        TabButton{
+            text: "Calculations"
+        }
 
     }
 
@@ -36,8 +38,12 @@ Window {
         anchors.leftMargin: 0
         anchors.top: tabBar.bottom
         anchors.topMargin: 0
+        currentIndex: tabBar.currentIndex
         OptionsView{
             id: options_view
+        }
+        CalculationView{
+            id:calculation_view
         }
     }
 
