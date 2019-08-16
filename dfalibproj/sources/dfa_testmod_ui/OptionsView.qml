@@ -25,6 +25,16 @@ Item {
         }
     }
 
+    function validate_calc(){
+       button_calculate.enabled  = !(
+                checkBox_gqd.checked == false &&
+                checkBox_imt.checked == false &&
+                checkBox_hrp.checked == false &&
+                checkBox_trp.checked ==  false)
+
+
+    }
+
     id: element
     Label {
         id: label_len
@@ -64,6 +74,9 @@ Item {
         anchors.rightMargin: 10
         anchors.top: checkBox_trp.bottom
         anchors.topMargin: 0
+        onClicked: {
+            validate_calc()
+        }
 
     }
 
@@ -77,6 +90,9 @@ Item {
         anchors.rightMargin: 10
         anchors.top: label_result.bottom
         anchors.topMargin: 10
+        onClicked: {
+            validate_calc()
+        }
     }
 
     CheckBox {
@@ -89,6 +105,9 @@ Item {
         anchors.rightMargin: 10
         anchors.top: checkBox_gqd.bottom
         anchors.topMargin: 0
+        onClicked: {
+            validate_calc()
+        }
     }
 
     CheckBox {
@@ -101,6 +120,10 @@ Item {
         anchors.rightMargin: 10
         anchors.top: checkBox_imt.bottom
         anchors.topMargin: 0
+        checked: true
+        onClicked: {
+            validate_calc()
+        }
     }
 
     Button {
