@@ -81,7 +81,6 @@ void Runner::run()
         string tmp;
         int i,j;
         for (i=0;i<limit; i++) {
-            qDebug()<<i<<endl;
             std::vector<int>  res = dfa::analyze_string( min_strings[i],gqd,imt,trp,hrp);
             best_sequences.insert({ min_strings[i], res});
 

@@ -31,8 +31,6 @@ Item {
                 checkBox_imt.checked == false &&
                 checkBox_hrp.checked == false &&
                 checkBox_trp.checked ==  false)
-
-
     }
 
     id: element
