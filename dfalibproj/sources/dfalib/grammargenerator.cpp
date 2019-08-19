@@ -4,6 +4,7 @@
 #include "dfalib/grammargenerator.h"
 #include <string>
 #include <vector>
+#include <bits/stdc++.h>
 
 using namespace std;
 
@@ -67,20 +68,40 @@ vector<string> GrammarGenerator::generate_hairpins_from_set(vector<string> hrps)
     return result;
 }
 
+vector<string> GrammarGenerator::generate_hairpins(){
+    vector<string> hrps_data = {"a", "c", "g", "t"}, result, perms;
+    unordered_map<char,string> opposite_chars = {{'a',"t"},{'t',"a"},{'c',"g"},{'g',"c"}};
+    do{
+        perms.push_back(hrps_data[0]+hrps_data[1]+hrps_data[2]+hrps_data[3]);
+    } while(next_permutation(hrps_data.begin(),hrps_data.end()));
+    int index = 0;
+    for(string hrp : perms){
+        string s1= "";
+        string s2 = "";
+        for(char ch : hrp){
+            s1 += string(1,ch) + "{"+ string(1,ch) +"}";
+            s2 = opposite_chars[ch]+"{"+string(1,ch)+"}";
+        }
+        result.push_back("TRP"+to_string(index++)+" = X* "+s1+" X{4}X* "+s2+" X*, a=[1:1] c=[1:1] g=[1:1] t=[1:1]\n");
+    }
+    return result;
+}
+
 vector<string> GrammarGenerator::get_triplex_set(int kind){
     if(kind)
         return {"tac","taa","tag","cgg","atg","cgt","cga","cgc","tat"};
     return {"cat","agc","cgc","gat","ggc","tgc","tat","gta","aat"};
 }
 
-std::string GrammarGenerator::create_grammar(
+
+string GrammarGenerator::create_grammar(
         bool find_GQD,
         bool find_IMT,
         bool find_TPR,
         bool find_HRP,
         vector<string> hrps,
-        int lenght){
-
+        int lenght)
+{
     string result = "";
     string names = {};
 
@@ -107,12 +128,17 @@ std::string GrammarGenerator::create_grammar(
     }
 
     if(find_IMT){
-        result += "IMT = "+generate_imotiv(20,20)+"\n\n";
+        result += "IMT = "+generate_imotiv(10,10)+"\n\n";
         names += "(IMT)\\\n\t";
     }
 
     if(find_HRP){
-        vector<string> hairpins = generate_hairpins_from_set(hrps);
+        vector<string> hairpins;
+        if(hrps.size()>0){
+            hairpins = generate_hairpins_from_set(hrps);
+        }else{
+            hairpins = generate_hairpins();
+        }
         names += "(";
         int i,im = hairpins.size(); string hairpin;
         for(i=0;i<im;i++){
@@ -126,13 +152,13 @@ std::string GrammarGenerator::create_grammar(
     }
 
     if(lenght>0){
-            names += "LENGTH";
-            result += "LENGTH = ";
-            int i;
-            for(i=0;i<lenght;i++){
-                result+="X";
-            }
-            result += "\n";
+        names += "LENGTH";
+        result += "LENGTH = ";
+        int i;
+        for(i=0;i<lenght;i++){
+            result+="X";
+        }
+        result += "\n";
     }
 
     result += "X = (a|c|g|t)\n";

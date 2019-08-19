@@ -27,14 +27,14 @@ int main(int argc, char* argv[]) {
 
     vector<vector<int>> values_from_best_sequences;
 
-    bool find_GQD = 1, find_IMT= 0, find_TRP=0, find_HRP=0; int size = 15;
+    bool find_GQD = 0, find_IMT= 1, find_TRP=0, find_HRP=0; int size = 0;
 
 
     std::map<std::string, std::shared_ptr<Automata>> processed_items;
     DNALangParser grammarParser;
     GrammarGenerator grammarGenerator;
     Parser parser;
-    string grammar_string = grammarGenerator.create_grammar(find_GQD, find_IMT, find_TRP, find_HRP, {}, size);
+    string grammar_string = grammarGenerator.create_grammar(find_GQD, find_IMT, find_TRP, find_HRP,{}, size);
     cout << grammar_string << endl << "-----------------------------------------" << endl;
     std::map<string, set<string> > grammar = grammarParser.parseString(grammar_string);
     assert(grammar.count("result") != 0);

@@ -16,6 +16,7 @@ public:
     string generate_imotiv(int count_1 = 20, int count_2 = 20);
     vector<string> cartesian_product(vector<string> data);
     vector<string> generate_hairpins_from_set(vector<string> hrps);
+    vector<string> generate_hairpins();
     vector<string> get_triplex_set(int kind = 1);
     std::string create_grammar(
             bool find_GQD = 0,

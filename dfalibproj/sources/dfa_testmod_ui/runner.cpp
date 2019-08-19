@@ -10,7 +10,7 @@ void Runner::run()
         GrammarGenerator grammarGenerator;
         Parser parser;
 
-        std::string  grammar_str = grammarGenerator.create_grammar(gqd,imt,trp,0,{},length);
+        std::string  grammar_str = grammarGenerator.create_grammar(gqd,imt,trp,hrp,{},length);
         emit sendText(QString::fromStdString(grammar_str));
 
         std::map<std::string, std::shared_ptr<Automata>> processed_items;
