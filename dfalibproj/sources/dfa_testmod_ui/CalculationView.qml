@@ -8,7 +8,7 @@ Item {
     Connections{
         target: Wrapper
         onTextReceivedtoCalc:{
-            console.log(text)
+//            console.log(text)
         }
         onUpdateCalcProgress:{
             progressBar.value = val

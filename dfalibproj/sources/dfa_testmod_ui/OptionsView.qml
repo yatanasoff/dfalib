@@ -17,6 +17,10 @@ Item {
             if(val==100){
                 button_calculate.text = "Calculate"
                 tableView.sortIndicatorVisible = true
+                checkBox_gqd.enabled = true
+                checkBox_hrp.enabled = true
+                checkBox_imt.enabled = true
+                checkBox_trp.enabled = true
             }
         }
         onClearUI:{
@@ -26,11 +30,14 @@ Item {
     }
 
     function validate_calc(){
+       if(button.text == "Calculate"){
        button_calculate.enabled  = !(
                 checkBox_gqd.checked == false &&
                 checkBox_imt.checked == false &&
                 checkBox_hrp.checked == false &&
-                checkBox_trp.checked ==  false)
+                checkBox_trp.checked ==  false
+           )
+       }
     }
 
     id: element
@@ -144,10 +151,18 @@ Item {
                             checkBox_trp.checked,
                             checkBox_hrp.checked,
                             spinBox_len.value)
+                checkBox_gqd.enabled = false
+                checkBox_hrp.enabled = false
+                checkBox_imt.enabled = false
+                checkBox_trp.enabled = false
                 button_calculate.text = "Stop"
             }else{
                 Wrapper.stopDFA()
                 button_calculate.text = "Calculate"
+                checkBox_gqd.enabled = true
+                checkBox_hrp.enabled = true
+                checkBox_imt.enabled = true
+                checkBox_trp.enabled = true
             }
         }
     }

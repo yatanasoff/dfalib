@@ -201,7 +201,7 @@ static int traverse_gquadruplex(string str, char ch, int last_pos, int last_grou
 static int max_gquadruplex_strength(string str, char ch){
     int current_pos = str.find(ch);
     if(current_pos<0)
-        return -1;
+        return 0;
 
     int last_group_id = 0;
     unordered_map<int,int> groups = {{current_pos,last_group_id}};
@@ -320,30 +320,30 @@ static vector<int> analyze_string(
 
     vector<int> result = {};
 
-    if(find_GQD){
+//    if(find_GQD){
         result.push_back(max_gquadruplex_strength(string,'g'));
-    }else{
-        result.push_back(-1);
-    }
+//    }else{
+//        result.push_back(-1);
+//    }
 
-    if(find_IMT){
+//    if(find_IMT){
         result.push_back(max_gquadruplex_strength(string,'c'));
-    }else{
-        result.push_back(-1);
-    }
+//    }else{
+//        result.push_back(-1);
+//    }
 
 
-    if(find_HRP){
+//    if(find_HRP){
         result.push_back(max_hairpin_strength(string));
-    }else {
-        result.push_back(-1);
-    }
+//    }else {
+//        result.push_back(-1);
+//    }
 
-    if(find_TPR){
+//    if(find_TPR){
         result.push_back(max_triplex_strength(string,find_TPR));
-    } else{
-        result.push_back(-1);
-    }
+//    } else{
+//        result.push_back(-1);
+//    }
 
     return result;
 }

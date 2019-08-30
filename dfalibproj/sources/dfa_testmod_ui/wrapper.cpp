@@ -108,7 +108,7 @@ ResultModel *Wrapper::getModelCalc()
 void Wrapper::saveToCSV(int type)
 {
     QString filename =  QFileDialog::getSaveFileName(nullptr,"Save to CSV", QDir::homePath(),"CSV Files (*.csv)" );
-    filename+=".csv";
+//    filename+=".csv";
     ResultModel *model;
     if(type==Runner::RUNNER_TYPE_OPTIONSVIEW){
         model = m_result_model;
