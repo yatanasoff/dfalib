@@ -1,9 +1,11 @@
 import QtQuick 2.0
-import QtQuick.Controls 1.5
-import QtQuick.Layouts 1.3
+import QtQuick.Window 2.12
+import QtQuick.Layouts 1.12
+import QtQuick.Controls 1.4
 
 Item {
     id: element
+
 
     Connections{
         target: Wrapper
