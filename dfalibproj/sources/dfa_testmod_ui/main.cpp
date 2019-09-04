@@ -1,9 +1,9 @@
 #include <QApplication>
 #include <QQmlApplicationEngine>
-
+#include <QtDebug>
 #include <QQmlContext>
 #include "wrapper.h"
-#include <QtDebug>
+#include "authenticationmanager.h"
 
 int main(int argc, char *argv[])
 {
@@ -24,8 +24,10 @@ int main(int argc, char *argv[])
     QApplication app(argc,argv);
     QQmlApplicationEngine engine;
     QSettings settings;
-    Wrapper w(&settings);
-    engine.rootContext()->setContextProperty("Wrapper",&w);
+    AuthenticationManager authentication_manager(&settings);
+    Wrapper wrapper(&settings,&authentication_manager);
+    engine.rootContext()->setContextProperty("Wrapper",&wrapper);
+    engine.rootContext()->setContextProperty("AuthManager",&authentication_manager);
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
     if (engine.rootObjects().isEmpty())
         return -1;

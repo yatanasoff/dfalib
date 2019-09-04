@@ -10,12 +10,14 @@ set(SOURCES
     wrapper.cpp
     resultmodel.cpp
     machineid.cpp
+    authenticationmanager.cpp
     )
 set(HEADERS
     runner.h
     wrapper.h
     resultmodel.h
     machineid.h
+    authenticationmanager.h
     )
 set(RESOURCES
     qml.qrc

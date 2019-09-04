@@ -1,19 +1,16 @@
 #ifndef WRAPPER_H
 #define WRAPPER_H
 
+#include <QDebug>
 #include <QObject>
 #include <QThread>
-#include <QDebug>
 #include <QFileDialog>
-#include <QtNetwork>
 #include <QDir>
-#include <QNetworkAccessManager>
 #include <QSettings>
-#include <QUuid>
 #include "runner.h"
 #include "resultmodel.h"
-#include "machineid.h"
-#include "jwt/jwt.h"
+#include "authenticationmanager.h"
+
 
 class Wrapper : public QObject
 {
@@ -21,22 +18,17 @@ class Wrapper : public QObject
     Q_PROPERTY(ResultModel* m_result_model READ getModel NOTIFY modelChanged )
     Q_PROPERTY(ResultModel* m_result_model_calc READ getModelCalc NOTIFY modelCalcChanged )
 public:
-    explicit Wrapper(QSettings *settings, QObject *parent = nullptr);
+    explicit Wrapper(
+            QSettings *settings,
+            QObject *parent = nullptr);
 
 signals:
-
     void textReceived(QString text);
     void updateProgress(double val);
     void clearUI();
-
     void textReceivedtoCalc(QString text);
     void updateCalcProgress(double val);
     void clearCalcUI();
-
-    void validCredentials();
-    void notValidCredentials();
-    void loginNeeded();
-
     void modelChanged();
     void modelCalcChanged();
 
@@ -51,25 +43,13 @@ public slots:
     ResultModel *getModel();
     ResultModel *getModelCalc();
     void saveToCSV(int type);
-    void doLogin(QString username, QString password);
-    bool checkCredentials();
-    void startLogin();
-private slots:
-    void loginDataReceived();
-    bool verifySecurityToken(QString token);
-    void handleError();
+
 private:
     QSettings *m_settings;
-
     Runner *m_runner;
     ResultModel* m_result_model;
-
     Runner* m_runner_calc;
     ResultModel* m_result_model_calc;
-
-    QString m_auth_server, m_uuid, m_security_token;
-    int m_auth_server_port;
-    QNetworkAccessManager *m_manager;
 };
 
 #endif // WRAPPER_H

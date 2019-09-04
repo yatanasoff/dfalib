@@ -3,10 +3,14 @@ import QtQuick.Controls 1.4
 
 Item {
 
+    function clear(){
+        textField_password.text = ""
+        textField_username.text = ""
+    }
     function validate_and_send(){
         if(     textField_password.text.length > 1 &&
                 textField_username.text.length > 1){
-            Wrapper.doLogin(textField_username.text, textField_password.text)
+            AuthManager.doLogin(textField_username.text, textField_password.text)
         }else{
             messageComponent.show_message("invalid data provided",0)
         }
@@ -38,6 +42,7 @@ Item {
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
             placeholderText: "username"
+            KeyNavigation.tab: textField_password
         }
 
         TextField {
@@ -51,6 +56,7 @@ Item {
             anchors.topMargin: 10
             echoMode: TextInput.Password
             placeholderText: "password"
+            KeyNavigation.tab: textField_username
         }
 
         Label {

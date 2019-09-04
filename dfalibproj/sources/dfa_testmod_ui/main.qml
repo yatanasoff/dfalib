@@ -11,29 +11,31 @@ Window {
     title: "DAFNA"
 
     Component.onCompleted: {
-       Wrapper.startLogin()
+       AuthManager.startLogin()
     }
 
     Connections {
-        target: Wrapper
+        target: AuthManager
         onValidCredentials :{
             login_view.visible= false;
-            messageComponent.show_message("Logged in",1)
+//            messageComponent.show_message("Logged in",1)
         }
         onNotValidCredentials:{
+            login_view.clear()
             login_view.visible =  true;
-            messageComponent.show_message("Not valid credentials",0)
-        }
-        onLoginNeeded:{
-            login_view.visible =  true;
-
+//            messageComponent.show_message("Not valid credentials",0)
         }
     }
 
+    LoginView{
+        id: login_view
+        anchors.fill: parent;
+        visible: true
+        z:1
+    }
 
     TabBar {
         id: tabBar
-
         height: 40
         anchors.right: parent.right
         anchors.rightMargin: 0
@@ -65,13 +67,6 @@ Window {
         CalculationView {
             id:calculation_view
         }
-    }
-
-    LoginView{
-        id: login_view
-        anchors.fill: parent;
-        visible: true
-        z:1
     }
 
     MessageComponent {
