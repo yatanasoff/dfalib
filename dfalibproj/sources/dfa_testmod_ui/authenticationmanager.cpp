@@ -54,12 +54,11 @@ void AuthenticationManager::loginDataReceived()
     {
         QByteArray body = reply->readAll();
         QJsonDocument doc = QJsonDocument::fromJson(body);
-        int userId = doc["userid"].toString().toInt();
+        int userId = doc["userid"].toInt(-1);
         QString jwt = doc["jwt"].toString();
         m_settings->setValue("security_token",jwt);
         m_settings->setValue("userid",userId);
         emit validCredentials();
-        //}
     }else{
         emit notValidCredentials();
     }
