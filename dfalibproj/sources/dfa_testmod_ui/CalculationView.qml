@@ -79,10 +79,10 @@ Item {
 
         Button {
             id: button1
-            y: 361
+            y: 447
             width: 150
             text: qsTr("Export")
-            anchors.bottom: progressBar.top
+            anchors.bottom: parent.bottom
             anchors.bottomMargin: 10
             anchors.left: parent.left
             anchors.leftMargin: 10
@@ -102,21 +102,24 @@ Item {
 
         ProgressBar {
             id: progressBar
-            y: 445
-            height: 10
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 10
-            anchors.left: parent.left
+            y: 431
+            height: 25
+            anchors.left: button1.right
             anchors.leftMargin: 10
             anchors.right: parent.right
             anchors.rightMargin: 10
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 10
         }
 
     }
 
 
-    /*##^## Designer {
+
+
+/*##^## Designer {
     D{i:0;autoSize:true;height:480;width:640}D{i:2;anchors_width:150}D{i:3;anchors_x:10;anchors_y:251}
 D{i:9;anchors_x:550;anchors_y:361}D{i:10;anchors_x:73;anchors_y:8}D{i:11;anchors_height:25;anchors_x:10;anchors_y:445}
+D{i:12;anchors_height:10;anchors_x:329;anchors_y:445}
 }
  ##^##*/

@@ -24,6 +24,7 @@ public:
 
 signals:
     void textReceived(QString text);
+    void statusReceived(QString text);
     void updateProgress(double val);
     void clearUI();
     void textReceivedtoCalc(QString text);
@@ -36,10 +37,13 @@ public slots:
     void receiveText(QString text);
     void receiveProgress(double val, double limit);
     void receiveResults(QString results);
+    void receiveStatus(QString status);
     void doDFA(bool gqd=0, bool imt=0, bool trp=0, bool hrp=0,int length=0);
     void stopDFA();
     void stopParse();
+    void generateGrammar(bool gqd=0, bool imt=0, bool trp=0, bool hrp=0,int length=0);
     void doParseString(QString strings);
+    void clearModel();
     ResultModel *getModel();
     ResultModel *getModelCalc();
     void saveToCSV(int type);

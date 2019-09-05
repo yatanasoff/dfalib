@@ -13,11 +13,16 @@ Item {
             textArea_result.append(text)
             textArea_result.cursorPosition  =  0
         }
+        onStatusReceived:{
+            label_status.text = text
+        }
         onUpdateProgress:{
             progressBar.value = val;
             if(val==100){
                 button_calculate.text = "Calculate"
+                button_gen_grammar.enabled = true
                 tableView.sortIndicatorVisible = true
+                spinBox_len.enabled = true
                 checkBox_gqd.enabled = true
                 checkBox_hrp.enabled = true
                 checkBox_imt.enabled = true
@@ -31,14 +36,14 @@ Item {
     }
 
     function validate_calc(){
-       if(button.text == "Calculate"){
-       button_calculate.enabled  = !(
-                checkBox_gqd.checked == false &&
-                checkBox_imt.checked == false &&
-                checkBox_hrp.checked == false &&
-                checkBox_trp.checked ==  false
-           )
-       }
+        if(button.text == "Calculate"){
+            button_calculate.enabled  = !(
+                        checkBox_gqd.checked == false &&
+                        checkBox_imt.checked == false &&
+                        checkBox_hrp.checked == false &&
+                        checkBox_trp.checked ==  false
+                        )
+        }
     }
 
     id: element
@@ -157,9 +162,13 @@ Item {
                 checkBox_imt.enabled = false
                 checkBox_trp.enabled = false
                 button_calculate.text = "Stop"
+                button_gen_grammar.enabled = false
+                spinBox_len.enabled = false
             }else{
                 Wrapper.stopDFA()
                 button_calculate.text = "Calculate"
+                button_gen_grammar.enabled =true
+                spinBox_len.enabled = true
                 checkBox_gqd.enabled = true
                 checkBox_hrp.enabled = true
                 checkBox_imt.enabled = true
@@ -172,7 +181,7 @@ Item {
         id: textArea_result
         text: qsTr("")
         anchors.bottom: tableView.top
-        anchors.bottomMargin: 10
+        anchors.bottomMargin: 6
         anchors.right: checkBox_imt.left
         anchors.rightMargin: 10
         anchors.left: parent.left
@@ -183,16 +192,26 @@ Item {
 
     ProgressBar {
         id: progressBar
-        y: 449
-        height: 10
-        value: 0
-        maximumValue: 100
-        anchors.left: parent.left
-        anchors.leftMargin: 10
+        height: 25
+        anchors.top: tableView.bottom
+        anchors.topMargin: 10
         anchors.right: parent.right
         anchors.rightMargin: 10
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: 10
+        value: 0
+        maximumValue: 100
+        anchors.left: button.right
+        anchors.leftMargin: 10
+
+        Label {
+            id: label_status
+            color: "#2b2629"
+            text: ""
+            anchors.rightMargin: 10
+            lineHeight: 0.6
+            verticalAlignment: Text.AlignVCenter
+            horizontalAlignment: Text.AlignRight
+            anchors.fill: parent
+        }
     }
 
     TableView {
@@ -205,7 +224,7 @@ Item {
         anchors.rightMargin: 10
         anchors.bottom: button.top
         anchors.bottomMargin: 10
-        anchors.top: button_calculate.bottom
+        anchors.top: button_gen_grammar.bottom
         anchors.topMargin: 10
         anchors.left: parent.left
         anchors.leftMargin: 10
@@ -227,19 +246,53 @@ Item {
 
     Button {
         id: button
-        y: 416
+        y: 447
         width: 150
         text: qsTr("Export")
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 10
         anchors.left: parent.left
         anchors.leftMargin: 10
-        anchors.bottom: progressBar.top
-        anchors.bottomMargin: 10
         onClicked: {
             Wrapper.saveToCSV(0)
         }
     }
 
+    Button {
+        id: button_gen_grammar
+        x: 480
+        width: 150
+        height: 25
+        text: qsTr("Generate Grammar")
+        anchors.top: button_calculate.bottom
+        anchors.topMargin: 10
+        anchors.right: parent.right
+        anchors.rightMargin: 10
+        onClicked: {
+            Wrapper.clearModel()
+            textArea_result.text = ""
+            progressBar.value = 0
+            Wrapper.generateGrammar(
+                        checkBox_gqd.checked,
+                        checkBox_imt.checked,
+                        checkBox_trp.checked,
+                        checkBox_hrp.checked,
+                        spinBox_len.value)
+        }
+    }
+
+
 }
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -247,7 +300,7 @@ Item {
     D{i:0;autoSize:true;height:480;width:640}D{i:1;anchors_height:30;anchors_width:100;anchors_x:83;anchors_y:51}
 D{i:2;anchors_height:30;anchors_width:100;anchors_x:155;anchors_y:182}D{i:3;anchors_height:25;anchors_width:150;anchors_x:255;anchors_y:40}
 D{i:4;anchors_height:30;anchors_width:151;anchors_x:10;anchors_y:115}D{i:5;anchors_height:30;anchors_x:241;anchors_y:40}
-D{i:6;anchors_y:140}D{i:7;anchors_y:90}D{i:8;anchors_y:268}D{i:11;anchors_height:176;anchors_width:437;anchors_y:246}
-D{i:18;anchors_x:22}
+D{i:6;anchors_y:140}D{i:7;anchors_y:90}D{i:8;anchors_y:268}D{i:10;anchors_height:25;anchors_y:416}
+D{i:12;anchors_height:176;anchors_width:437;anchors_y:246}D{i:19;anchors_x:22}D{i:20;anchors_y:223}
 }
  ##^##*/

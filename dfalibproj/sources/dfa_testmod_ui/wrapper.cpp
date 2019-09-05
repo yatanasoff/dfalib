@@ -12,6 +12,7 @@ Wrapper::Wrapper(QSettings *settings, QObject *parent) : QObject(parent)
     connect(m_runner,&Runner::sendText, this, &Wrapper::receiveText);
     connect(m_runner,&Runner::sendProgress, this, &Wrapper::receiveProgress);
     connect(m_runner,&Runner::sendResults, this, &Wrapper::receiveResults);
+    connect(m_runner,&Runner::sendStatus, this, &Wrapper::receiveStatus);
 
     connect(m_runner_calc,&Runner::sendText, this, &Wrapper::receiveText);
     connect(m_runner_calc,&Runner::sendProgress, this, &Wrapper::receiveProgress);
@@ -71,6 +72,11 @@ void Wrapper::receiveResults(QString results){
     }
 }
 
+void Wrapper::receiveStatus(QString status)
+{
+    emit statusReceived(status);
+}
+
 void Wrapper::doDFA(bool gqd, bool imt, bool trp, bool hrp, int length)
 {
     m_result_model->clear();
@@ -88,11 +94,21 @@ void Wrapper::stopParse()
     m_runner_calc->stop();
 }
 
+void Wrapper::generateGrammar(bool gqd, bool imt, bool trp, bool hrp, int length)
+{
+     m_runner->generateGrammar(gqd, imt, trp, hrp, length);
+}
+
 void Wrapper::doParseString(QString strings)
 {
     m_result_model_calc->clear();
     emit clearCalcUI();
     m_runner_calc->parseStrings(strings.split('\n'));
+}
+
+void Wrapper::clearModel()
+{
+    m_result_model->clear();
 }
 
 ResultModel *Wrapper::getModel()

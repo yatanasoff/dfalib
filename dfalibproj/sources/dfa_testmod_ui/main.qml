@@ -23,7 +23,6 @@ Window {
         onNotValidCredentials:{
             login_view.clear()
             login_view.visible =  true;
-            console.log(notification_enabled)
             if(notification_enabled)
                 messageComponent.show_message("Not valid credentials",0)
         }
