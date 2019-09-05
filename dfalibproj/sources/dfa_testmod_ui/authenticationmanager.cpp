@@ -3,8 +3,8 @@
 AuthenticationManager::AuthenticationManager(QSettings *settimgs, QObject *parent) : QObject(parent)
 {
     m_manager = new QNetworkAccessManager();
-    m_auth_server = "dafnaapi.broutonlab.com";
-    m_auth_server_port = 9598;
+    m_auth_server = "185.154.72.169";
+    m_auth_server_port = 8227;
     m_settings =  settimgs;
 }
 
