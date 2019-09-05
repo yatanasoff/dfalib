@@ -18,13 +18,16 @@ Window {
         target: AuthManager
         onValidCredentials :{
             login_view.visible= false;
-//            messageComponent.show_message("Logged in",1)
+            messageComponent.show_message("Logged in",1)
         }
         onNotValidCredentials:{
             login_view.clear()
             login_view.visible =  true;
-//            messageComponent.show_message("Not valid credentials",0)
+            console.log(notification_enabled)
+            if(notification_enabled)
+                messageComponent.show_message("Not valid credentials",0)
         }
+
     }
 
     LoginView{

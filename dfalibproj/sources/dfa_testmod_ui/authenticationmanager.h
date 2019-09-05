@@ -24,7 +24,7 @@ private slots:
     void loginDataReceived();
     void handleError();
 signals:
-    void notValidCredentials();
+    void notValidCredentials(bool notification_enabled);
     void validCredentials();
 
 private:

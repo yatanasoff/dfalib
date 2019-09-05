@@ -38,10 +38,10 @@ void AuthenticationManager::startLogin()
         if(validateSecurityToken()){
             emit validCredentials();
         }else{
-            emit notValidCredentials();
+            emit notValidCredentials(false);
         }
     }else{
-        emit notValidCredentials();
+        emit notValidCredentials(false);
     }
 
 }
@@ -60,7 +60,7 @@ void AuthenticationManager::loginDataReceived()
         m_settings->setValue("userid",userId);
         emit validCredentials();
     }else{
-        emit notValidCredentials();
+        emit notValidCredentials(true);
     }
 
 }
@@ -85,5 +85,5 @@ bool AuthenticationManager::validateSecurityToken()
 
 void AuthenticationManager::handleError()
 {
-    emit notValidCredentials();
+    emit notValidCredentials(true);
 }
