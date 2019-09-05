@@ -22,11 +22,9 @@ set(HEADERS
 set(RESOURCES
     qml.qrc
     )
-set(Qt5Quick_DIR /opt/qt5/5.13.0/gcc_64/lib/cmake/Qt5Quick)
 add_executable(${PROJECT_NAME} ${HEADERS} ${SOURCES} ${RESOURCES})
 include_directories(../../include)
 target_link_libraries(${PROJECT_NAME} Qt5::Core Qt5::Quick Qt5::Widgets Qt5::Network)
 target_link_libraries(${PROJECT_NAME} regex dfalib)
-#for jwt
 target_link_libraries(${PROJECT_NAME}  -lssl -lcrypto )
 
