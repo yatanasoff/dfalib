@@ -74,8 +74,8 @@ Item {
             x: 415
             height: 30
             text: qsTr("Login")
-            anchors.horizontalCenterOffset: 130
-            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.right: textField_password.right
+            anchors.rightMargin: 0
             anchors.top: textField_password.bottom
             anchors.topMargin: 10
             onClicked: {
@@ -88,6 +88,8 @@ Item {
 
 
 }
+
+
 
 
 
