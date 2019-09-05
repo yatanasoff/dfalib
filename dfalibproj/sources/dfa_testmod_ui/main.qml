@@ -10,6 +10,16 @@ Window {
     height: 480
     title: "DAFNA"
 
+    Timer{
+        id: timer_lic_checker
+        interval: 3600000
+        repeat: true
+        running: true
+        onTriggered: {
+            AuthManager.startLogin();
+        }
+    }
+
     Component.onCompleted: {
        AuthManager.startLogin()
     }
