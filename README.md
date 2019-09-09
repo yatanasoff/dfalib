@@ -9,7 +9,7 @@ In dfalib the following algorithms are implemented:
   - DFA minimization.
   - intersection of two DFAs.
   
-## Program installatoin on Windows
+## Program installation on Windows
 
 https://drive.google.com/open?id=19Rz_kyeIng_fdLflV0QTvVyEa_5s6Q4P
 
