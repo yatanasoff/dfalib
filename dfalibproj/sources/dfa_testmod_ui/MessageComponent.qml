@@ -4,23 +4,38 @@ Item {
     id: container
     property int message_type: 1
     property alias message_text: msg.text
+    property bool stateVisible: false
+    states: [
+            State { when: stateVisible;
+                PropertyChanges {   target: rectangle; opacity: 1.0    }
+            },
+            State { when: !stateVisible;
+                PropertyChanges {   target: rectangle; opacity: 0.0    }
+            }
+        ]
+        transitions: Transition {
+            NumberAnimation { property: "opacity"; duration: 500}
+        }
+
     Timer{
         id: timer_msg
-        interval: 3000
+        interval: 1000
         running: false
         repeat: false
         onTriggered: {
-            rectangle.visible = false
+              container.stateVisible  = false
         }
     }
     Rectangle{
         id: rectangle
-        color: message_type == 0 ? '#F87060' :  '#09BC8A'
+
+        opacity: 0.0
+        color: 'black'
         anchors.fill: parent
-        visible: false
+        visible: true
         Text {
             id: msg
-            color: '#FFFCF9'
+            color: 'white'
             text: "this is an error sample message"
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
@@ -29,7 +44,9 @@ Item {
     function show_message(text_msg, type_msg){
         message_text = text_msg
         message_type = type_msg
-        rectangle.visible = true
-        timer_msg.running = true
+        container.stateVisible  = true
+        if(message_type!=2){
+            timer_msg.running = true
+        }
     }
 }

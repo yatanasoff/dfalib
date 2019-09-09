@@ -1,16 +1,28 @@
 import QtQuick 2.0
+import QtQuick.Window 2.12
+import QtQuick.Layouts 1.12
 import QtQuick.Controls 1.4
+
 
 Item {
 
     function clear(){
         textField_password.text = ""
         textField_username.text = ""
+        textField_password.enabled =  true
+        textField_username.enabled = true
+        button_login.enabled = true
+//        button_login.text = "Login"
     }
     function validate_and_send(){
         if(     textField_password.text.length > 1 &&
                 textField_username.text.length > 1){
             AuthManager.doLogin(textField_username.text, textField_password.text)
+            textField_password.enabled =  false
+            textField_username.enabled = false
+            button_login.enabled = false
+//            button_login.text = "Connecting..."
+            messageComponent.show_message("connecting...",2)
         }else{
             messageComponent.show_message("invalid data provided",0)
         }
